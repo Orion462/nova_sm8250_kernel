@@ -378,8 +378,8 @@ void snd_jack_report(struct snd_jack *jack, int status)
 					    status & jack_kctl->mask_bits);
 
 #ifdef CONFIG_SND_JACK_INPUT_DEV
-	if (!jack->input_dev)
-		return;
+	idev = input_get_device(jack->input_dev);
+	if (!idev)
 
 	for (i = 0; i < ARRAY_SIZE(jack->key); i++) {
 		int testbit = SND_JACK_BTN_0 >> i;
@@ -397,7 +397,7 @@ void snd_jack_report(struct snd_jack *jack, int status)
 					    status & testbit);
 	}
 
-	input_sync(jack->input_dev);
+	input_sync(idev);
 #endif /* CONFIG_SND_JACK_INPUT_DEV */
 }
 EXPORT_SYMBOL(snd_jack_report);
