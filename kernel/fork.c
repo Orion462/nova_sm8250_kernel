@@ -96,6 +96,7 @@
 #include <linux/cpufreq_times.h>
 #include <linux/scs.h>
 #include <linux/devfreq_boost.h>
+#include <linux/cpu_input_boost.h>
 #include <linux/simple_lmk.h>
 
 #include <asm/pgtable.h>
@@ -119,10 +120,6 @@
  * Maximum number of threads
  */
 #define MAX_THREADS FUTEX_TID_MASK
-
-#ifdef CONFIG_KPROFILES
-extern int kp_active_mode(void);
-#endif
 
 /*
  * Protected counters by write_lock_irq(&tasklist_lock)
@@ -2393,11 +2390,8 @@ long _do_fork(unsigned long clone_flags,
 	long nr;
 
 	if (task_is_zygote(current)) {
-		#ifdef CONFIG_KPROFILES
-		if (kp_active_mode() == 2 || kp_active_mode() == 3) {
-			devfreq_boost_kick_max(DEVFREQ_CPU_LLCC_DDR_BW, 50);
-		}
-		#endif
+			cpu_input_boost_kick_max(80);
+			devfreq_boost_kick_max(DEVFREQ_CPU_LLCC_DDR_BW, 80);
 	}
 
 	/*
