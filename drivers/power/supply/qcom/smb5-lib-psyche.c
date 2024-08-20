@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2018-2020 The Linux Foundation. All rights reserved.
- * Copyright (C) 2021 XiaoMi, Inc.
  */
 
 #include <linux/device.h>
@@ -23,6 +22,10 @@
 #include "schgm-flash.h"
 #ifdef CONFIG_DUAL_FUEL_GAUGE_BQ27Z561
 #include "dual_fuel_gauge_class.h"
+#endif
+
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
 #endif
 
 #define smblib_err(chg, fmt, ...)		\
@@ -517,7 +520,11 @@ static const struct apsd_result smblib_apsd_results[] = {
 	[CDP] = {
 		.name	= "CDP",
 		.bit	= CDP_CHARGER_BIT,
+#ifdef CONFIG_FACTORY_BUILD
+		.pst	= POWER_SUPPLY_TYPE_USB
+#else
 		.pst	= POWER_SUPPLY_TYPE_USB_CDP
+#endif
 	},
 	[DCP] = {
 		.name	= "DCP",
@@ -1816,6 +1823,13 @@ static int set_sdp_current(struct smb_charger *chg, int icl_ua)
 	int rc;
 	u8 icl_options;
 	const struct apsd_result *apsd_result = smblib_get_apsd_result(chg);
+
+#ifdef CONFIG_FORCE_FAST_CHARGE
+	if (force_fast_charge > 0 && icl_ua == USBIN_500MA)
+	{
+		icl_ua = USBIN_900MA;
+	}
+#endif
 
 	/* power source is SDP */
 	switch (icl_ua) {

@@ -362,26 +362,7 @@ static bool pd_disable_cp_by_jeita_status(struct usbpd_pm *pdpm)
 /* get bq27z561 fastcharge mode to enable or disabled */
 static bool pd_get_bms_digest_verified(struct usbpd_pm *pdpm)
 {
-	union power_supply_propval pval = {0,};
-	int rc;
-
-	if (!pdpm->bms_psy)
-		return false;
-
-	rc = power_supply_get_property(pdpm->bms_psy,
-				POWER_SUPPLY_PROP_AUTHENTIC, &pval);
-	if (rc < 0) {
-		pr_info("Couldn't get fastcharge mode:%d\n", rc);
-		return false;
-	}
-
-	pr_err("pval.intval: %d\n", pval.intval);
-
-	if (pval.intval == 1)
-		return true;
-	else
-		return false;
-
+	return true;
 }
 
 /* get bq27z561 chip ok*/
@@ -2333,7 +2314,7 @@ static int pd_policy_parse_dt(struct usbpd_pm *pdpm)
 		pr_err("pd-bat-volt-max property missing, use default val\n");
 	else
 		pm_config.bat_volt_lp_lmt = pdpm->bat_volt_max;
-	pr_info("pm_config.bat_volt_lp_lmt:%d\n", pm_config.bat_volt_lp_lmt);
+	pr_debug("pm_config.bat_volt_lp_lmt:%d\n", pm_config.bat_volt_lp_lmt);
 
 	rc = of_property_read_u32(node,
 			"mi,pd-bat-curr-max", &pdpm->bat_curr_max);
@@ -2341,7 +2322,7 @@ static int pd_policy_parse_dt(struct usbpd_pm *pdpm)
 		pr_err("pd-bat-curr-max property missing, use default val\n");
 	else
 		pm_config.bat_curr_lp_lmt = pdpm->bat_curr_max;
-	pr_info("pm_config.bat_curr_lp_lmt:%d\n", pm_config.bat_curr_lp_lmt);
+	pr_debug("pm_config.bat_curr_lp_lmt:%d\n", pm_config.bat_curr_lp_lmt);
 
 	rc = of_property_read_u32(node,
 			"mi,pd-bus-volt-max", &pdpm->bus_volt_max);
@@ -2349,7 +2330,7 @@ static int pd_policy_parse_dt(struct usbpd_pm *pdpm)
 		pr_err("pd-bus-volt-max property missing, use default val\n");
 	else
 		pm_config.bus_volt_lp_lmt = pdpm->bus_volt_max;
-	pr_info("pm_config.bus_volt_lp_lmt:%d\n", pm_config.bus_volt_lp_lmt);
+	pr_debug("pm_config.bus_volt_lp_lmt:%d\n", pm_config.bus_volt_lp_lmt);
 
 	rc = of_property_read_u32(node,
 			"mi,pd-bus-curr-max", &pdpm->bus_curr_max);
@@ -2357,30 +2338,30 @@ static int pd_policy_parse_dt(struct usbpd_pm *pdpm)
 		pr_err("pd-bus-curr-max property missing, use default val\n");
 	else
 		pm_config.bus_curr_lp_lmt = pdpm->bus_curr_max;
-	pr_info("pm_config.bus_curr_lp_lmt:%d\n", pm_config.bus_curr_lp_lmt);
+	pr_debug("pm_config.bus_curr_lp_lmt:%d\n", pm_config.bus_curr_lp_lmt);
 
 	rc = of_property_read_u32(node,
 			"mi,step-charge-high-vol-curr-max", &pdpm->step_charge_high_vol_curr_max);
 
-	pr_info("pdpm->step_charge_high_vol_curr_max:%d\n",
+	pr_debug("pdpm->step_charge_high_vol_curr_max:%d\n",
 				pdpm->step_charge_high_vol_curr_max);
 
 	rc = of_property_read_u32(node,
 			"mi,cell-vol-high-threshold-mv", &pdpm->cell_vol_high_threshold_mv);
 
-	pr_info("pdpm->cell_vol_high_threshold_mv:%d\n",
+	pr_debug("pdpm->cell_vol_high_threshold_mv:%d\n",
 				pdpm->cell_vol_high_threshold_mv);
 
 	rc = of_property_read_u32(node,
 			"mi,cell-vol-max-threshold-mv", &pdpm->cell_vol_max_threshold_mv);
 
-	pr_info("pdpm->cell_vol_max_threshold_mv:%d\n",
+	pr_debug("pdpm->cell_vol_max_threshold_mv:%d\n",
 				pdpm->cell_vol_max_threshold_mv);
 
 	rc = of_property_read_u32(node,
 			"mi,pd-non-ffc-bat-volt-max", &pdpm->non_ffc_bat_volt_max);
 
-	pr_info("pdpm->non_ffc_bat_volt_max:%d\n",
+	pr_debug("pdpm->non_ffc_bat_volt_max:%d\n",
 				pdpm->non_ffc_bat_volt_max);
 
 	rc = of_property_read_u32(node,
@@ -2395,14 +2376,14 @@ static int pd_policy_parse_dt(struct usbpd_pm *pdpm)
 			"mi,therm-level-threshold", &pdpm->therm_level_threshold);
 	if (rc < 0)
 		pr_err("therm-level-threshold missing, use default val\n");
-	pr_info("therm-level-threshold:%d\n", pdpm->therm_level_threshold);
+	pr_debug("therm-level-threshold:%d\n", pdpm->therm_level_threshold);
 
 	pdpm->battery_warm_th = JEITA_WARM_THR;
 	rc = of_property_read_u32(node,
 			"mi,pd-battery-warm-th", &pdpm->battery_warm_th);
 	if (rc < 0)
 		pr_err("pd-battery-warm-th missing, use default val\n");
-	pr_info("pd-battery-warm-th:%d\n", pdpm->battery_warm_th);
+	pr_debug("pd-battery-warm-th:%d\n", pdpm->battery_warm_th);
 
 	pdpm->cp_sec_enable = of_property_read_bool(node,
 				"mi,cp-sec-enable");
@@ -2507,5 +2488,4 @@ module_exit(usbpd_pm_exit);
 MODULE_AUTHOR("Fei Jiang<jiangfei1@xiaomi.com>");
 MODULE_DESCRIPTION("Xiaomi usb pd statemachine for bq");
 MODULE_LICENSE("GPL");
-
 

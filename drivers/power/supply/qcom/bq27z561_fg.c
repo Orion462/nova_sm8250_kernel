@@ -2,7 +2,6 @@
  * bq27z561 fuel gauge driver
  *
  * Copyright (C) 2017 Texas Instruments Incorporated - http://www.ti.com/
- * Copyright (C) 2021 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License version 2 as
@@ -39,11 +38,7 @@ enum print_reason {
 	PR_OEM		= BIT(2),
 	PR_DEBUG	= BIT(3),
 };
-
-static int debug_mask = PR_DEBUG;
-module_param_named(
-	debug_mask, debug_mask, int, 0600
-);
+#define debug_mask PR_INTERRUPT
 
 #define FG_MAX_INDEX 2
 #define RETRY_COUNT	5
@@ -929,7 +924,6 @@ static int fg_read_system_soc(struct bq_fg_chip *bq)
 
 	soc = bq_battery_soc_smooth_tracking(bq, raw_soc, soc, temp, curr);
 	bq->last_soc = soc;
-
 	return soc;
 }
 
@@ -1207,7 +1201,11 @@ static int fg_get_batt_capacity_level(struct bq_fg_chip *bq)
 	else if (bq->batt_rca)
 		return POWER_SUPPLY_CAPACITY_LEVEL_LOW;
 	else if (bq->batt_fd) {
+#ifdef CONFIG_FACTORY_BUILD
+		return POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL;
+#else
 		return POWER_SUPPLY_CAPACITY_LEVEL_LOW;
+#endif
 	} else
 		return POWER_SUPPLY_CAPACITY_LEVEL_NORMAL;
 

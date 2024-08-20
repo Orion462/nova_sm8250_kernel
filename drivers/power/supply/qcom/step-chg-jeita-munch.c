@@ -3,7 +3,7 @@
  * Copyright (c) 2017-2019 The Linux Foundation. All rights reserved.
  */
 
-#define pr_fmt(fmt)
+#define pr_fmt(fmt) "QCOM-STEPCHG: %s: " fmt, __func__
 
 #include <linux/delay.h>
 #include <linux/module.h>
@@ -1316,4 +1316,3 @@ void qcom_step_chg_deinit(void)
 	wakeup_source_unregister(chip->step_chg_ws);
 	the_chip = NULL;
 }
-

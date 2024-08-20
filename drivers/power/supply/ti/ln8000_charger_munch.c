@@ -58,7 +58,14 @@ static const char *ln8000_dev_name[] = {
 	} while (0);
 
 #define ln_info(fmt, ...)                       \
-	do {} while (0);
+	do {                                            \
+		if (info->dev_role == LN_ROLE_STANDALONE)   \
+			printk(KERN_INFO "ln8000-standalone: %s: " fmt, __func__, ##__VA_ARGS__);  \
+		else if (info->dev_role == LN_ROLE_MASTER)                              \
+			printk(KERN_INFO "ln8000-master: %s: " fmt, __func__, ##__VA_ARGS__);  \
+		else                                                                    \
+			printk(KERN_INFO "ln8000-slave: %s: " fmt, __func__, ##__VA_ARGS__);  \
+	} while (0);
 
 #define ln_dbg(fmt, ...)                        \
 	do {                                            \
@@ -1645,7 +1652,7 @@ static int ln8000_get_dev_role(struct i2c_client *client)
 
 	dev_info(&client->dev, "%s: matched to %s\n", __func__, of_id->compatible);
 
-	return (uintptr_t)of_id->data;
+	return (int)of_id->data;
 }
 
 static int ln8000_parse_dt(struct ln8000_info *info)

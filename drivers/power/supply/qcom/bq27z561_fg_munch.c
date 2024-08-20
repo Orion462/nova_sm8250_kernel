@@ -717,7 +717,7 @@ static int fg_sha256_auth(struct bq_fg_chip *bq, u8 *rand_num, int length)
 	if (ret < 0)
 		return ret;
 
-	/*4. Write the checksum (2?s complement sum of (1), (2), and (3)) to address 0x60.*/
+	/*4. Write the checksum (2’s complement sum of (1), (2), and (3)) to address 0x60.*/
 	cksum_calc = checksum(rand_num, length);
 	ret = fg_write_byte(bq, bq->regs[BQ_FG_REG_MAC_CHKSUM], cksum_calc);
 	if (ret < 0)
@@ -1661,8 +1661,7 @@ static int fg_get_property(struct power_supply *psy, enum power_supply_property 
 		if (bq->old_hw) {
 			val->intval = bq->batt_ttf;
 			break;
-                }
-
+        }
 		ret = fg_read_ttf(bq);
 		if (ret >= 0)
 			bq->batt_ttf = ret;
@@ -1998,7 +1997,7 @@ static ssize_t fg_attr_show_curr_avg(struct device *dev,
 	int len;
 	int curr;
 
-	//ret = fg_read_avg_current(bq, &curr);
+/*	ret = fg_read_avg_current(bq, &curr);*/
 	curr = bq->avg_current;
 	len = snprintf(buf, 1024, "%d\n", curr);
 
@@ -2968,7 +2967,6 @@ static int bq_fg_probe(struct i2c_client *client,
 	} else {
 		bq->fg_index = 0;
 	}
-
 	memcpy(bq->regs, regs, NUM_REGS);
 
 	fg_check_device(bq);
@@ -3101,5 +3099,4 @@ module_i2c_driver(bq_fg_driver);
 MODULE_DESCRIPTION("TI BQ27Z561 Driver");
 MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("Texas Instruments");
-
 

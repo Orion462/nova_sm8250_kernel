@@ -471,6 +471,7 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(mtbf_current),
 	POWER_SUPPLY_ATTR(enable_bypass_mode),
 	POWER_SUPPLY_ATTR(smart_batt),
+	POWER_SUPPLY_ATTR(has_dp),
 	/* Local extensions */
 	POWER_SUPPLY_ATTR(usb_hc),
 	POWER_SUPPLY_ATTR(usb_otg),
@@ -685,6 +686,21 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(i2c_error_count),
 	POWER_SUPPLY_ATTR(avg_current),
 	POWER_SUPPLY_ATTR(charging_mode),
+	/* PS5169 properties */
+	POWER_SUPPLY_ATTR(ps_en),
+	POWER_SUPPLY_ATTR(ps_chipid),
+	POWER_SUPPLY_ATTR(ps_cfgmod),
+	POWER_SUPPLY_ATTR(ps_cfg_flip),
+	POWER_SUPPLY_ATTR(ps_cfg_usb),
+	POWER_SUPPLY_ATTR(ps_cfg_dp),
+	POWER_SUPPLY_ATTR(ps_cfg_usb_dp),
+	POWER_SUPPLY_ATTR(ps_rmov_usb),
+	POWER_SUPPLY_ATTR(ps_rmov_dp),
+	POWER_SUPPLY_ATTR(ps_rmov_usb_dp),
+	POWER_SUPPLY_ATTR(eq0_tx),
+	POWER_SUPPLY_ATTR(eq1_tx),
+	POWER_SUPPLY_ATTR(eq2_tx),
+	POWER_SUPPLY_ATTR(tx_gain),
 #ifdef CONFIG_BATT_VERIFY_BY_DS28E16
 	/* battery verify properties */
 	POWER_SUPPLY_ATTR(romid),
@@ -703,6 +719,7 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(maxim_batt_cycle_count),
 #endif
 	POWER_SUPPLY_ATTR(chip_ok),
+	POWER_SUPPLY_ATTR(smart_batt),
 	/* DIV 2 properties */
 	POWER_SUPPLY_ATTR(div_2_mode),
 	POWER_SUPPLY_ATTR(reverse_chg_mode),
@@ -720,7 +737,6 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(cc_toggle_enable),
 	POWER_SUPPLY_ATTR(fg_type),
 	POWER_SUPPLY_ATTR(charger_status),
-	POWER_SUPPLY_ATTR(moisture_detection_enabled),
 	/* Local extensions of type int64_t */
 	POWER_SUPPLY_ATTR(charge_counter_ext),
 	/* Properties of type `const char *' */
@@ -729,6 +745,9 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(battery_type),
 	POWER_SUPPLY_ATTR(cycle_counts),
 	POWER_SUPPLY_ATTR(serial_number),
+	// Factory high temperature to intercept
+	POWER_SUPPLY_ATTR(temp_max_fac),
+	POWER_SUPPLY_ATTR(time_ot),
 };
 
 static struct attribute *
