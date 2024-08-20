@@ -107,10 +107,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
 		return true;
 	}
 
-	/* If the last frequency wasn't set yet then we can still amend it */
-	if (sg_policy->work_in_progress)
-		return true;
-
 	/* No need to recalculate next freq for min_rate_limit_us
 	 * at least. However we might still decide to further rate
 	 * limit once frequency change direction is decided, according
@@ -365,11 +361,9 @@ unsigned long apply_dvfs_headroom(int cpu, unsigned long util, unsigned long max
 		return util;
 
 	if (cpumask_test_cpu(cpu, cpu_lp_mask)) {
-			headroom = util + (util >> 0); // 2x
-	} else if (cpumask_test_cpu(cpu, cpu_perf_mask)) {
-		headroom = util + (util >> 1) + (util >> 2); // 1.75x
+		headroom = util + (util >> 1);
 	} else {
-		headroom = util + (util >> 2); // 1.25x
+		headroom = util + (util >> 2);
 	}
 
 	return headroom;
@@ -819,7 +813,7 @@ static void sugov_policy_free(struct sugov_policy *sg_policy)
 static int sugov_kthread_create(struct sugov_policy *sg_policy)
 {
 	struct task_struct *thread;
-	struct sched_param param = { .sched_priority = MAX_RT_PRIO - 1 };
+	struct sched_param param = { .sched_priority = MAX_USER_RT_PRIO / 2 };
 	struct cpufreq_policy *policy = sg_policy->policy;
 	int ret;
 
@@ -1068,7 +1062,7 @@ static void sugov_stop(struct cpufreq_policy *policy)
 	for_each_cpu(cpu, policy->cpus)
 		cpufreq_remove_update_util_hook(cpu);
 
-	synchronize_rcu();
+	synchronize_sched();
 
 	if (!policy->fast_switch_enabled) {
 		irq_work_sync(&sg_policy->irq_work);
